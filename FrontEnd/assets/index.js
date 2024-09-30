@@ -1,4 +1,5 @@
-//------------------------- récupérer la galerie et les catégories ----------------------------------//
+// Récupérer la galerie et les catégories //
+
 let lstGallery = [];
 let lstCategories = [];
 
@@ -13,10 +14,11 @@ const getWorks = async () => {
       createCategory();
       createGallery(lstGallery);
       createGalleryModal(lstGallery);
+      checkUserStatus();
   });
 }
 
-// -------------------------- créer les catégories et rendre fonctionnel les filtres ----------------------------------//
+// Créer les catégories et faire fonctionner les filtres //
 
 const createCategory = () => {
   const filter = document.createElement("div");
@@ -29,7 +31,6 @@ const createCategory = () => {
     lstCategories
       .map(
         (categories) =>
-        
           `<div class="button" id="${categories.name}">${categories.name}</div>`
       )
       .join("");
@@ -48,9 +49,45 @@ const createCategory = () => {
       btnFilter[i].classList.add("selected");
     });
   }
+
+  // Appel de la fonction pour vérifier le statut de l'utilisateur
+  checkUserStatus();
 };
 
-//------------------------- créer la galerie ----------------------------------//
+// Fonction pour vérifier si l'utilisateur est connecté et modifier l'affichage
+function checkUserStatus() {
+  const token = localStorage.getItem('user'); // Vérifie si le token utilisateur est dans le localStorage
+
+  // Récupère les éléments à masquer ou afficher
+  const filter = document.querySelector('.filter');
+  const headerEdit = document.querySelector('.header_edit');
+  const modify = document.querySelector('.modify');
+  const modifyImg = document.querySelector('.modify_img');
+  const modifyArticle = document.querySelector('.modify_article');
+  const PageLogin = document.querySelector('.pagelogin');
+  const logout = document.querySelector('.logout');
+
+  // Si l'utilisateur est connecté
+  if (token) {
+    if (filter) filter.style.visibility = 'hidden'; // Masquer l'élément avec la classe 'filter'
+    if (PageLogin) PageLogin.style.display = 'none'; // Masquer l'élément avec la classe 'filter'
+    if (headerEdit) headerEdit.style.visibility = 'visible'; // Afficher les éléments d'édition
+    if (modify) modify.style.visibility = 'visible';
+    if (modifyImg) modifyImg.style.visibility = 'visible';
+    if (modifyArticle) modifyArticle.style.visibility = 'visible';
+    if (logout) logout.style.display = 'block';
+  } else {
+    // Si l'utilisateur n'est pas connecté, cacher les éléments d'édition
+    if (filter) filter.style.visibility = 'visible'; // Affiche l'élément avec la classe 'filter'
+    if (PageLogin) PageLogin.style.display = 'block'; // Affiche l'élément avec la classe 'filter'
+    if (headerEdit) headerEdit.style.visibility = 'hidden';
+    if (modify) modify.style.visibility = 'hidden';
+    if (modifyImg) modifyImg.style.visibility = 'hidden';
+    if (modifyArticle) modifyArticle.style.visibility = 'hidden';
+    if (logout) logout.style.display = 'none';
+  }
+}
+// Créer la galerie //
 
 let gallery = document.createElement("div");
 gallery.classList.add("gallery");
@@ -70,7 +107,7 @@ const createGallery = (lstGallery) => {
 
 getWorks();
 
-// ---------------- Apparition de la modal sur le lien "modifier" -------------------------------//
+// Apparition de la modal sur le lien "modifier" //
 
 const modalContainer = document.querySelector(".modal-container");
 const modalTriggers = document.querySelectorAll(".modal-trigger");
@@ -86,7 +123,7 @@ const modalLink = document.querySelector(".modalLink");
 if (modalLink !== null)
 modalLink.addEventListener("click", firstModal);
 
-// ---------------------fonction pour faire apparaitre la galerie dans la modale et ajouter les icones suppression ------------//
+// fonction pour faire apparaitre la galerie dans la modal et ajouter les icones suppression //
 
 function createGalleryModal(lstGallery) {
   const galleryModal = document.querySelector('.gallery_modal');
@@ -108,7 +145,7 @@ function createGalleryModal(lstGallery) {
   }  
 }
 
-//------------------------- fonction pour supprimer des projets-------------------------//
+// Fonction pour supprimer des projets //
 
 async function deleteProject (e) { 
   let id = this.dataset.id; 
@@ -130,9 +167,10 @@ async function deleteProject (e) {
       })
 };
 
-//---------------- AJOUTS DE PROJETS----------------------------//
+// AJOUTS DE PROJETS //
 
-//initialisation de variables globales des éléments du formulaire utilisés dans plusieurs fonctions
+// Initialisation de variables globales des éléments du formulaire utilisés dans plusieurs fonctions //
+
 const modal = document.querySelector('.modal');
 const modal_add= document.querySelector('.modal_add');
 
@@ -141,7 +179,7 @@ if (arrowModal !== null)
 arrowModal.addEventListener("click", firstModal)
 
 const formUploadImg = document.querySelector(".form_upload_img");
-const labelFile= document.querySelector(".form_add_photo");
+const labelFile= document.querySelector("#form_add_photo");
 const input_file = document.createElement("input");
 const img_element = document.createElement('img');
 img_element.classList.add('img_uploaded')
@@ -152,7 +190,7 @@ btnAdd.addEventListener('click', modalAdd);
 
 const btnValidate= document.querySelector('.button_validate');
 
-// fonction qui affiche la première modale
+// Fonction qui affiche la première modal //
 
 function firstModal() {
   modal.style.display = "block";
@@ -160,7 +198,8 @@ function firstModal() {
   resetForm();
 }
 
-// // fonction pour afficher la deuxième modale
+// Fonction pour afficher la deuxième modal //
+
 function modalAdd() {
   modal.style.display = "none";
   modal_add.style.display = "block";
@@ -175,7 +214,8 @@ function modalAdd() {
   categoriesSelect(lstCategories);
 }
 
-// Sélectionner une catégorie pour l'image à envoyer
+// Sélectionner une catégorie pour l'image à envoyer //
+
 function categoriesSelect (categories) {
   const categorySelect =  document.getElementById('categories');
 
@@ -190,7 +230,8 @@ function categoriesSelect (categories) {
   });
 }
 
-// récupérer l'image de l'utilisateur dans une variable (file), et faire apparaitre la miniature de l'image uploaded dans le formulaire avant validation 
+// Récupérer l'image de l'utilisateur dans "file" et faire apparaitre la miniature de l'image dans le formulaire avant validation //
+
 const inputTitle = document.getElementById("title_picture");
 const selectCategories= document.getElementById("categories")
 
@@ -208,7 +249,7 @@ function previewFile(e) {
   let url = URL.createObjectURL(file);
   displayImg();
 
-  //fonction pour créer l'image, et l'intégrer dans le label
+  // Fonction pour créer l'image, et l'intégrer dans le label //
 
  function displayImg () {
   labelFile.style.padding = "0px";
@@ -218,7 +259,8 @@ function previewFile(e) {
   }
 }
 
-// fonction pour mettre le bouton valider en vert une fois les conditions remplies
+// Fonction pour mettre le bouton valider en vert une fois les conditions remplies //
+
 function btnValidateForm() {
   if (inputTitle.value !=="" && selectCategories.value !=="default" &&  input_file.files.length > 0 ) {
     btnValidate.style.background = "#1D6154";
@@ -238,7 +280,7 @@ if (inputTitle !== null) {
   formUploadImg.addEventListener('submit', addProject);
 }
 
-// Sounission du formulaire et envoie du projet vers la base de données
+// Soumettre le formulaire et envoyer le projet vers la base de données //
 
 async function addProject (e) {
   e.preventDefault();
@@ -266,7 +308,7 @@ async function addProject (e) {
     })
 }
 
-// fonction pour reset le formulaire
+// Fonction pour reset le formulaire //
 
 function resetForm() {
   labelFile.style.padding = "30px 0 0"
@@ -285,4 +327,6 @@ function resetForm() {
 
 const logout = document.querySelector('.logout')
 if (logout !== null)
-logout.addEventListener("click", ()=> localStorage.removeItem('user'));
+logout.addEventListener("click", ()=> localStorage.removeItem('user'))
+
+;
