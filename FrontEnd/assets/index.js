@@ -6,17 +6,16 @@ let lstCategories = [];
 const getWorks = async () => {
   await fetch("http://localhost:5678/api/works")
     .then(res => res.json())
-    .then(data => lstGallery = data)
+    .then(data => lstGallery = data);
   await fetch("http://localhost:5678/api/categories")
     .then(res => res.json())
     .then(data => lstCategories = data)
     .then(() => {
-      createCategory();
+      createCategory(lstCategories);
       createGallery(lstGallery);
       createGalleryModal(lstGallery);
-      checkUserStatus();
   });
-}
+};
 
 // Créer les catégories et faire fonctionner les filtres //
 
@@ -25,34 +24,34 @@ const createCategory = () => {
   filter.classList.add("filter");
   portfolio.appendChild(filter);
 
-  filter.innerHTML =
-    `<div class="button selected" id="0">Tous</div>
-  ` +
-    lstCategories
-      .map(
-        (categories) =>
-          `<div class="button" id="${categories.name}">${categories.name}</div>`
-      )
-      .join("");
+  // Ajoute "Tous" comme option par défaut
+  filter.innerHTML = `<div class="button selected" id="0">Tous</div>` +
+    lstCategories.map(
+      (category) => `<div class="button" id="${category.id}">${category.name}</div>`
+    ).join("");
 
-  let btnFilter = document.querySelectorAll(".button");
-  for (let i = 0; i < btnFilter.length; i++) {
-    btnFilter[i].addEventListener("click", () => {
-      if (i !== 0) {
-        lstGalleryFilter = lstGallery.filter((el) => el.categoryId == i);
-        createGallery(lstGalleryFilter);
-      } else {
-        createGallery(lstGallery);
-      }
+  const btnFilter = document.querySelectorAll(".button");
 
-      btnFilter.forEach((btn) => btn.classList.remove("selected"));
-      btnFilter[i].classList.add("selected");
+  btnFilter.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const categoryId = parseInt(btn.id); // Utilise l'ID de catégorie associé au bouton
+
+      const filteredGallery = categoryId !== 0
+        ? lstGallery.filter((el) => el.categoryId === categoryId) // Compare avec le categoryId
+        : lstGallery; // Si "Tous" est sélectionné, montre toute la galerie
+
+      createGallery(filteredGallery);
+
+      // Gère la sélection visuelle des boutons
+      btnFilter.forEach((b) => b.classList.remove("selected"));
+      btn.classList.add("selected");
     });
-  }
+  });
 
   // Appel de la fonction pour vérifier le statut de l'utilisateur
-  checkUserStatus();
+  checkUserStatus(); // Cet appel doit être effectué ici
 };
+
 
 // Fonction pour vérifier si l'utilisateur est connecté et modifier l'affichage
 function checkUserStatus() {
@@ -112,10 +111,10 @@ getWorks();
 const modalContainer = document.querySelector(".modal-container");
 const modalTriggers = document.querySelectorAll(".modal-trigger");
 
-modalTriggers.forEach(trigger => trigger.addEventListener("click", toggleModal))
+modalTriggers.forEach(trigger => trigger.addEventListener("click", toggleModal));
 
 function toggleModal() {
-  modalContainer.classList.toggle("active")
+  modalContainer.classList.toggle("active");
   createGalleryModal(lstGallery);
 }
 
@@ -140,7 +139,7 @@ function createGalleryModal(lstGallery) {
   
     let iconsDelete = document.querySelectorAll(".icon_delete");
     for (let iconDelete of iconsDelete) {
-    iconDelete.addEventListener('click', deleteProject)
+    iconDelete.addEventListener('click', deleteProject);
     }
   }  
 }
