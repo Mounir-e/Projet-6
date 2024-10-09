@@ -14,12 +14,18 @@ const getWorks = async () => {
       createCategory(lstCategories);
       createGallery(lstGallery);
       createGalleryModal(lstGallery);
+      checkUserStatus();
   });
 };
 
-// Créer les catégories et faire fonctionner les filtres //
-
+// Créer les catégories et faire fonctionner les filtres
 const createCategory = () => {
+  // Vérifie si un élément avec la classe "filter" existe déjà et le supprime
+  const existingFilter = document.querySelector(".filter");
+  if (existingFilter) {
+    existingFilter.remove(); // Supprime l'ancien filtre avant d'en créer un nouveau
+  }
+
   const filter = document.createElement("div");
   filter.classList.add("filter");
   portfolio.appendChild(filter);
@@ -49,8 +55,9 @@ const createCategory = () => {
   });
 
   // Appel de la fonction pour vérifier le statut de l'utilisateur
-  checkUserStatus(); // Cet appel doit être effectué ici
+  checkUserStatus();
 };
+
 
 
 // Fonction pour vérifier si l'utilisateur est connecté et modifier l'affichage
@@ -164,6 +171,7 @@ async function deleteProject (e) {
           document.location.href=("login.html"); 
         }
       })
+      checkUserStatus();
 };
 
 // AJOUTS DE PROJETS //
@@ -299,7 +307,7 @@ async function addProject (e) {
       if(res.ok) {
         getWorks();
         resetForm();
-        firstModal()
+        firstModal();
       } else if (res.status == "401") {
         alert('Session expirée, merci de vous reconnecter');
         document.location.href=("login.html"); 
